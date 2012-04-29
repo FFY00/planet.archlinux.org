@@ -1,0 +1,143 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title><TMPL_VAR name></title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="<TMPL_VAR generator ESCAPE="HTML">" />
+<link rel="stylesheet" href="planet.css" type="text/css" />
+<link rel="icon" href="http://archlinux.org/media/favicon.ico" type="image/x-icon" />
+<TMPL_IF feedtype>
+<link rel="alternate" href="<TMPL_VAR feed ESCAPE="HTML">" title="<TMPL_VAR channel_title_plain ESCAPE="HTML">" type="application/<TMPL_VAR feedtype>+xml" />
+</TMPL_IF>
+</head>
+
+<body>
+  <div id="head_container">
+    <div id="title">
+      <div id="logo"><h1 id="archtitle"><a href="/" title="Arch Linux (Planet)"></a></h1></div>
+    </div><!-- end title -->
+    <div id="main_nav">
+      <ul>
+        <li><a href="http://www.archlinux.org/download/">Download</a></li>
+        <li class="selected"><a href="http://planet.archlinux.org">Planet</a></li>
+        <li><a href="https://aur.archlinux.org">AUR</a></li>
+        <li><a href="https://bugs.archlinux.org">Bugs</a></li>
+        <li><a href="https://wiki.archlinux.org">Wiki</a></li>
+        <li><a href="https://bbs.archlinux.org">Forums</a></li>
+        <li><a href="http://www.archlinux.org">Home</a></li>
+      </ul>
+    </div>
+  </div><!-- end head_container -->
+
+<div id="content">
+
+<TMPL_LOOP Items>
+<TMPL_IF new_date>
+<TMPL_UNLESS __FIRST__>
+</div><!-- /entry -->
+</div><!-- /daygroup -->
+</TMPL_UNLESS>
+<div class="daygroup">
+<h2 class="date"><TMPL_VAR new_date></h2>
+</TMPL_IF>
+
+<TMPL_IF new_channel>
+<TMPL_UNLESS new_date>
+</div><! -- /entry -->
+</TMPL_UNLESS>
+<div class="entry <TMPL_IF channel_class><TMPL_VAR channel_class><TMPL_ELSE>noclass</TMPL_IF>">
+
+   <div class="person-info">
+	<p><a href="<TMPL_VAR channel_link>" title="<TMPL_VAR channel_title_plain ESCAPE="HTML">"><TMPL_VAR channel_name><br /><TMPL_IF channel_alias><em>"<TMPL_VAR channel_alias>"</em></TMPL_IF></a></p>
+         <TMPL_IF channel_face>        <img class="face" src="images/hackergotchis/<TMPL_VAR channel_face ESCAPE="HTML">" width="<TMPL_VAR channel_facewidth ESCAPE="HTML">" height="<TMPL_VAR channel_faceheight ESCAPE="HTML">" alt="" /><TMPL_ELSE>        <img class="face" src="images/hackergotchis/nobody.png" width="60" height="60" alt="" /></TMPL_IF><br/>
+	 <span class="attribs">
+          <TMPL_IF channel_aur> [ <a href="https://aur.archlinux.org/packages.php?SeB=m&K=<TMPL_VAR channel_aur>">AUR</A> ] </TMPL_IF>
+          <TMPL_IF channel_flyspray> [ <a href="https://bugs.archlinux.org/index.php?project=0&dev=<TMPL_VAR channel_flyspray>&do=index">Bugs</a> ] </TMPL_IF> 
+         </span>
+   
+   </div><!-- /person-info -->
+</TMPL_IF>
+
+   <div class="post">
+   <div class="post2">
+        <div class="post-header">
+          <h4 class="post-title"><a href="<TMPL_VAR link ESCAPE="HTML">"><TMPL_VAR title></a></h4>
+        </div>
+        <div class="post-contents">
+          <TMPL_VAR content>
+        </div>
+        <div class="post-footer">
+             <p><a href="<TMPL_VAR link>"><TMPL_IF author>posted by <TMPL_VAR author> on </TMPL_IF><TMPL_VAR date><TMPL_IF category> under <TMPL_VAR category></TMPL_IF></a></p>
+        </div><!-- /post-footer -->
+   </div><!-- /post2 -->
+   </div><!-- /post2 and /post -->
+
+<TMPL_IF __LAST__>
+</div><!-- /entry -->
+</div><!-- /daygroup -->
+</TMPL_IF>
+</TMPL_LOOP>
+
+</div><!-- /content -->
+
+<div id="subs">
+
+<h2>Planet Arch Linux</h2>
+
+<p>Planet Arch Linux is a window into the world, work and lives of Arch Linux hackers and developers.</p>
+<p>Last updated on <TMPL_VAR date>. All times are normalized to UTC time.</p>
+
+<h2>Subscribe</h2>
+<ul style="list-style: square !important; margin-left: 1em;">
+ <li><a href="rss20.xml">RSS 2.0</a>
+ <li><a href="rss10.xml">RSS 1.0</a>
+ <li><a href="atom.xml">ATOM 1.0</a>
+ <li><a href="foafroll.xml">FOAF</a>
+ <li><a href="opml.xml">OPML</a>
+</ul> 
+ 
+<h2>Feeds</h2>
+
+<ul>
+<TMPL_LOOP Channels>
+ <li>
+  <a href="<TMPL_VAR url ESCAPE="HTML">" title="subscribe"><img src="images/feed-blue-10x10.png" alt="(feed)" /></a> <a <TMPL_IF link>href="<TMPL_VAR link ESCAPE="HTML">" </TMPL_IF><TMPL_IF message>class="message" title="<TMPL_VAR message ESCAPE="HTML">"</TMPL_IF><TMPL_UNLESS message>title="<TMPL_VAR title_plain ESCAPE="HTML">"</TMPL_UNLESS>><TMPL_VAR name></a>
+ </li>
+</TMPL_LOOP>
+</ul>
+
+<h2>Arch Planet Worldwide</h2>
+
+<p>Other Arch Linux communities around the world.</p>
+
+<ul style="list-style: square !important; margin-left: 1em;">
+ <li><a href="http://planeta.archlinux-br.org/">Brasil</a></li>
+ <li><a href="http://planet.archlinux.cl/">Chile</a></li>
+ <li><a href="http://planet.archlinux.fr/">France</a></li>
+ <li><a href="http://planet.archlinux.de/">Germany</a></li>
+ <li><a href="http://www.archlinux.it/planet/">Italy</a></li>
+ <li><a href="http://planeta.archlinux.pl/">Poland</a></li>
+ <li><a href="http://archlinux.org.ru/blog/">Russia</a></li>
+ <li><a href="http://planeta.archlinux-es.org/">Spain</a></li>
+ <li><a href="http://gezegen.archlinux.org.tr/">Turkey</a></li>
+</ul>
+
+<p>brain0 maintains a <a href="http://dev.archlinux.org/~thomas/archmap/archmap.kmz">google earth map</a> showing
+where in the world arch users live. <a href="http://wiki.archlinux.org/index.php/ArchMap/List">Add yourself!</a></p>
+
+<h2>Colophon</h2>
+
+<p>Brought to you by the <a href="http://www.planetplanet.org/">Planet</a> aggregator, cron, and <a href="http://www.python.org/">Python</a>.  Layout inspired by <a href="http://planet.gnome.org">Planet Gnome</a>.  CSS tweaking and rewrite thanks to <a href="http://xtermin.us">Charles Mauch</a></p>
+
+<p>Planet Arch Linux is edited by <a href="http://www.archlinux.org/developers/#andrea">Andrea Scarpino</a>. Please mail him if you have a question or would like your blog added to the feed.</p>
+
+</div><!-- /subs -->
+
+<div id="foot">
+<p>Copyright &copy; 2005-2011, <a href="http://www.archlinux.org">The Arch Linux project</a></p>
+<p>Blog entries aggregated on this page are owned by, and represent the opinion of the author.</p>
+</div>
+
+</body>
+
+</html>

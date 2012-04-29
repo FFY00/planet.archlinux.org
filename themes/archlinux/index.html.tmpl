@@ -1,0 +1,117 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title><TMPL_VAR name></title>
+	<meta name="robots" content="noindex,nofollow" />
+	<link rel="stylesheet" type="text/css" href="//www.archlinux.org/static/archweb.css" media="screen, projection" />
+	<link rel="stylesheet" type="text/css" href="//www.archlinux.org/static/archweb-print.css" media="print" />
+	<link rel="icon" type="image/x-icon" href="//www.archlinux.org/static/favicon.ico" />
+	<link rel="shortcut icon" type="image/x-icon" href="//www.archlinux.org/static/favicon.ico" />
+	<style type="text/css">
+		<!--
+		img {
+			max-width:600px;
+		}
+		pre {
+			white-space:pre-wrap;
+			word-wrap:break-word;
+			width:600px;
+			min-width:95%;
+			max-height:700px;
+			overflow:auto;
+			font-family:monospace;
+		}
+		#content th, #content td {
+			white-space:normal;
+		}
+		-->
+	</style>
+	<TMPL_IF feedtype>
+	<link rel="alternate" href="<TMPL_VAR feed ESCAPE="HTML">" title="<TMPL_VAR channel_title_plain ESCAPE="HTML">" type="application/<TMPL_VAR feedtype>+xml" />
+	</TMPL_IF>
+</head>
+<body>
+	<div id="archnavbar" class="anb-planet">
+		<div id="archnavbarlogo"><h1><a href="//planet.archlinux.org/">Arch Linux (Planet)</a></h1></div>
+		<div id="archnavbarmenu">
+		<ul id="archnavbarlist">
+			<li id="anb-home"><a href="//www.archlinux.org" title="Arch news, packages, projects and more">Home</a></li>
+			<li id="anb-packages"><a href="//www.archlinux.org/packages/" title="Arch Package Database">Packages</a></li>
+			<li id="anb-forums"><a href="https://bbs.archlinux.org/" title="Community forums">Forums</a></li>
+			<li id="anb-wiki"><a href="https://wiki.archlinux.org/" title="Community documentation">Wiki</a></li>
+			<li id="anb-bugs"><a href="https://bugs.archlinux.org/" title="Report and track bugs">Bugs</a></li>
+			<li id="anb-aur"><a href="https://aur.archlinux.org/" title="Arch Linux User Repository">AUR</a></li>
+			<li id="anb-download"><a href="//www.archlinux.org/download/" title="Get Arch Linux">Download</a></li>
+		</ul>
+		</div>
+	</div>
+	<div id="content">
+		<div id="archdev-navbar"></div>
+
+		<div id="content-left-wrapper">
+		<div id="content-left">
+			<div id="planetnews">
+				<h2><TMPL_VAR name></h2>
+				<TMPL_LOOP Items>
+				<h4><a href="<TMPL_VAR link ESCAPE="HTML">"><TMPL_VAR title></a></h4>
+				<p class="date"><TMPL_VAR date></p>
+				<div><TMPL_VAR content></div>
+				<div style="font-size:x-small;text-align:right;">
+					<TMPL_IF author><TMPL_VAR author>@</TMPL_IF><a href="<TMPL_VAR channel_link ESCAPE="HTML">"><TMPL_VAR channel_name></a>
+				</div>
+				</TMPL_LOOP>
+			</div>
+		</div>
+		</div>
+		<div id="content-right">
+			<div class="box">
+				<h4>Planet Arch Linux</h4>
+				<p>Planet Arch Linux is a window into the world,
+				work and lives of Arch Linux hackers and developers.</p>
+				<p>Last updated on <TMPL_VAR date>. All times are normalized to UTC time.</p>
+			</div>
+			<div id="sidebar">
+				<h4>Subscribe</h4>
+				<ul>
+				<TMPL_LOOP Channels>
+					<li><a href="<TMPL_VAR url ESCAPE="HTML">"><img src="images/rss.png" alt="(feed)" style="border:none" /></a>&nbsp;<a href="<TMPL_VAR link ESCAPE="HTML">"><TMPL_VAR name></a></li>
+				</TMPL_LOOP>
+				</ul>
+				<h4>Feeds</h4>
+				<ul>
+					<li><img src="images/rss.png" alt="(feed)" style="border:none" /></a>&nbsp;<a href="atom.xml">ATOM 1.0</a>
+					<li><img src="images/rss.png" alt="(feed)" style="border:none" /></a>&nbsp;<a href="rss20.xml">RSS 2.0</a>
+					<li><img src="images/rss.png" alt="(feed)" style="border:none" /></a>&nbsp;<a href="rss10.xml">RSS 1.0</a>
+					<li><img src="images/rss.png" alt="(feed)" style="border:none" /></a>&nbsp;<a href="foafroll.xml">FOAF</a>
+					<li><img src="images/rss.png" alt="(feed)" style="border:none" /></a>&nbsp;<a href="opml.xml">OPML</a>
+				</ul>
+
+				<h4>Arch Planet Worldwide</h4>
+				<p>Other Arch Linux communities around the world.</p>
+				<ul style="list-style: square !important; margin-left: 1em;">
+					 <li><a href="http://planeta.archlinux-br.org/">Brasil</a></li>
+					 <li><a href="http://planet.archlinux.cl/">Chile</a></li>
+					 <li><a href="http://planet.archlinux.fr/">France</a></li>
+					 <li><a href="http://planet.archlinux.de/">Germany</a></li>
+					 <li><a href="http://www.archlinux.it/planet/">Italy</a></li>
+					 <li><a href="http://archlinux.org.ru/blog/">Russia</a></li>
+					 <li><a href="http://planeta.archlinux-es.org/">Spain</a></li>
+				</ul>
+
+				<p>brain0 maintains a <a href="//dev.archlinux.org/~thomas/archmap/archmap.kmz">google earth map</a> showing
+				where in the world arch users live. <a href="https://wiki.archlinux.org/index.php/ArchMap/List">Add yourself!</a></p>
+
+				<h4>Colophon</h4>
+
+				<p>Brought to you by the <a href="//www.planetplanet.org/">Planet</a> aggregator, cron, and <a href="http://www.python.org/">Python</a>.  
+				<p>Planet Arch Linux is edited by <a href="//www.archlinux.org/developers/#andrea">Andrea Scarpino</a>. Please mail him if you have a question or would like your blog added to the feed.</p>
+			</div>
+		</div>
+		<div id="footer">
+			<p>Copyright &copy; 2005-20122 <a href="//www.archlinux.org">The Arch Linux project</a></p>
+			<p>Blog entries aggregated on this page are owned by, and represent the opinion of the author.</p>
+		</div>
+	</div>
+</body>
+</html>
