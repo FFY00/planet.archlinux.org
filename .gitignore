@@ -1,2 +1,2 @@
-archplanet/cache
-archplanet/output
+archplanet/cache/*
+archplanet/output/*
