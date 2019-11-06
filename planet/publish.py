@@ -1,7 +1,8 @@
 import os, sys
 import urllib.parse
 import planet
-import pubsubhubbub_publisher as PuSH
+# TODO: fix publishing
+#import pubsubhubbub_publisher as PuSH
 
 def publish(config):
     log = planet.logger
