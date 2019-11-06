@@ -100,7 +100,7 @@ class SpiderTest(unittest.TestCase):
                   os.path.join(workdir, "blacklist", 
             'planet.intertwingly.net,2006,testfeed1,1'))
 
-	self.spiderFeed(testfeed % '1b')
+        self.spiderFeed(testfeed % '1b')
         self.assertEqual(3, len(glob.glob(workdir+"/planet*")))
 
     def test_spiderUpdate(self):
