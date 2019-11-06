@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 
 import unittest, os, glob, calendar, shutil, time
 from planet.spider import filename, spiderPlanet, writeCache

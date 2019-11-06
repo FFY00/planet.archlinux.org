@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 """A filter to guess languages.
 
 This utility saves a Trigram object on file.

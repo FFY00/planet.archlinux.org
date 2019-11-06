@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 import os, sys, configparser, shutil, glob
 from functools import reduce
 venus_base = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

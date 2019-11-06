@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 
 from .test_config_csv import ConfigCsvTest
 from planet import config

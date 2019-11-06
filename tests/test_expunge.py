@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 import unittest, os, glob, shutil, time
 from planet.spider import filename
 from planet import feedparser, config

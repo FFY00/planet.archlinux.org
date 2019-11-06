@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 
 import unittest, os, shutil
 from planet.foaf import foaf2config
