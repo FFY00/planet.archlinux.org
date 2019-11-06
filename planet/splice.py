@@ -2,8 +2,8 @@
 import glob, os, time, shutil
 from xml.dom import minidom
 import planet, config, feedparser, reconstitute, shell
-from reconstitute import createTextElement, date
-from spider import filename
+from .reconstitute import createTextElement, date
+from .spider import filename
 from planet import idindex
 
 def splice():
@@ -62,12 +62,12 @@ def splice():
     sources = config.cache_sources_directory()
     for sub in config.subscriptions():
         data=feedparser.parse(filename(sources,sub))
-        if data.feed.has_key('id'): sub_ids.append(data.feed.id)
+        if 'id' in data.feed: sub_ids.append(data.feed.id)
         if not data.feed: continue
 
         # warn on missing links
-        if not data.feed.has_key('planet_message'):
-            if not data.feed.has_key('links'): data.feed['links'] = []
+        if 'planet_message' not in data.feed:
+            if 'links' not in data.feed: data.feed['links'] = []
 
             for link in data.feed.links:
               if link.rel == 'self': break
@@ -94,7 +94,7 @@ def splice():
     for mtime,file in dir:
         if index != None:
             base = os.path.basename(file)
-            if index.has_key(base) and index[base] not in sub_ids: continue
+            if base in index and index[base] not in sub_ids: continue
 
         try:
             entry=minidom.parse(file)
@@ -186,6 +186,6 @@ def apply(doc):
             if not os.path.exists(dest_dir): os.makedirs(dest_dir)
 
             log.info("Copying %s to %s", source, dest)
-            if os.path.exists(dest): os.chmod(dest, 0644)
+            if os.path.exists(dest): os.chmod(dest, 0o644)
             shutil.copyfile(source, dest)
             shutil.copystat(source, dest)

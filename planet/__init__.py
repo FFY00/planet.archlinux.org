@@ -4,11 +4,11 @@ logger = None
 loggerParms = None
 
 import os, sys, re
-import config
+from . import config
 config.__init__()
 
-from ConfigParser import ConfigParser
-from urlparse import urljoin
+from configparser import ConfigParser
+from urllib.parse import urljoin
 
 def getLogger(level, format):
     """ get a logger with the specified log level """
@@ -39,4 +39,4 @@ import feedparser
 feedparser.SANITIZE_HTML=1
 feedparser.RESOLVE_RELATIVE_URIS=0
 
-import publish
+from . import publish

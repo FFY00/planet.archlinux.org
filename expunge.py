@@ -13,5 +13,5 @@ if __name__ == '__main__':
         config.load(sys.argv[1])
         expunge.expungeCache()
     else:
-        print "Usage:"
-        print "  python %s config.ini" % sys.argv[0]
+        print("Usage:")
+        print("  python %s config.ini" % sys.argv[0])

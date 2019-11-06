@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 
-import unittest, os, sys, glob, new, re, StringIO, time
+import unittest, os, sys, glob, new, re, io, time
 from planet import feedparser
 from planet.reconstitute import reconstitute
 from planet.scrub import scrub
@@ -19,10 +19,10 @@ class ReconstituteTest(unittest.TestCase):
             description, expect = self.desc_re.search(data).groups()
             testcase.close()
         except:
-            raise RuntimeError, "can't parse %s" % name
+            raise RuntimeError("can't parse %s" % name)
 
         # parse and reconstitute to a string
-        work = StringIO.StringIO()
+        work = io.StringIO()
         results = feedparser.parse(data)
         scrub(testfiles%name, results)
         reconstitute(results, results.entries[0]).writexml(work)

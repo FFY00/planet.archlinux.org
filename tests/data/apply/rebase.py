@@ -8,7 +8,7 @@ except:
   sys.exit()
 
 from xml.dom import minidom, Node
-from urlparse import urljoin
+from urllib.parse import urljoin
 
 def rebase(node, newbase):
   if node.hasAttribute('href'):
@@ -21,4 +21,4 @@ def rebase(node, newbase):
 
 doc = minidom.parse(sys.stdin)
 rebase(doc.documentElement, base)
-print doc.toxml('utf-8')
+print(doc.toxml('utf-8'))

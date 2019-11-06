@@ -1,4 +1,4 @@
-from StringIO import StringIO
+from io import StringIO
 from xml.sax.saxutils import escape
 
 from genshi.input import HTMLParser, XMLParser
@@ -16,7 +16,7 @@ feed_types = [
 def norm(value):
     """ Convert to Unicode """
     if hasattr(value,'items'):
-        return dict([(norm(n),norm(v)) for n,v in value.items()])
+        return dict([(norm(n),norm(v)) for n,v in list(value.items())])
 
     try:
         return value.decode('utf-8')
@@ -26,9 +26,9 @@ def norm(value):
 def find_config(config, feed):
     # match based on self link
     for link in feed.links:
-        if link.has_key('rel') and link.rel=='self':
-            if link.has_key('type') and link.type in feed_types:
-                if link.has_key('href') and link.href in subscriptions:
+        if 'rel' in link and link.rel=='self':
+            if 'type' in link and link.type in feed_types:
+                if 'href' in link and link.href in subscriptions:
                     return norm(dict(config.parser.items(link.href)))
     
     # match based on name
@@ -49,13 +49,13 @@ class XHTMLParser(object):
     def __iter__(self):
         self.iter = self.parser.__iter__()
         return self
-    def next(self):
-        object = self.iter.next()
+    def __next__(self):
+        object = next(self.iter)
         if object[0] == 'END': self.depth = self.depth - 1
         predepth = self.depth
         if object[0] == 'START': self.depth = self.depth + 1
         if predepth: return object
-        return self.next()
+        return next(self)
 
 def streamify(text,bozo):
     """ add a .stream to a _detail textConstruct """
@@ -91,7 +91,7 @@ def run(script, doc, output_file=None, options={}):
         for sub in config.subscriptions():
             data=feedparser.parse(filename(sources,sub))
             data.feed.config = norm(dict(config.parser.items(sub)))
-            if data.feed.has_key('link'):
+            if 'link' in data.feed:
                 feeds.append((data.feed.config.get('name',''),data.feed))
             subscriptions.append(norm(sub))
         feeds.sort()
@@ -108,8 +108,8 @@ def run(script, doc, output_file=None, options={}):
              # add new_feed and new_date fields
              entry.new_feed = entry.source.id
              entry.new_date = date = None
-             if entry.has_key('published_parsed'): date=entry.published_parsed
-             if entry.has_key('updated_parsed'): date=entry.updated_parsed
+             if 'published_parsed' in entry: date=entry.published_parsed
+             if 'updated_parsed' in entry: date=entry.updated_parsed
              if date: entry.new_date = time.strftime(new_date_format, date)
 
              # remove new_feed and new_date fields if not "new"
@@ -124,11 +124,11 @@ def run(script, doc, output_file=None, options={}):
                  last_feed = None
 
              # add streams for all text constructs
-             for key in entry.keys():
-                 if key.endswith("_detail") and entry[key].has_key('type') and \
-                     entry[key].has_key('value'):
+             for key in list(entry.keys()):
+                 if key.endswith("_detail") and 'type' in entry[key] and \
+                     'value' in entry[key]:
                      streamify(entry[key],entry.source.planet_bozo)
-             if entry.has_key('content'):
+             if 'content' in entry:
                  for content in entry.content:
                      streamify(content,entry.source.planet_bozo)
      

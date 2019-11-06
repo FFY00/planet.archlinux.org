@@ -1,4 +1,4 @@
-from ConfigParser import ConfigParser
+from configparser import ConfigParser
 
 inheritable_options = [ 'online_accounts' ]
 
@@ -86,14 +86,14 @@ def foaf2config(rdf, config, subject=None, section=None):
                 config.set(feed, 'name', str(title))
 
         # now look for OnlineAccounts for the same person
-        if accounts.keys():
+        if list(accounts.keys()):
             for statement in model.find_statements(Statement(person,foaf.holdsAccount,None)):
                 rdfaccthome = model.get_target(statement.object,foaf.accountServiceHomepage)
                 rdfacctname = model.get_target(statement.object,foaf.accountName)
 
                 if not rdfaccthome or not rdfacctname: continue
 
-                if not rdfaccthome.is_resource() or not accounts.has_key(str(rdfaccthome.uri)): continue
+                if not rdfaccthome.is_resource() or str(rdfaccthome.uri) not in accounts: continue
 
                 if not rdfacctname.is_literal(): continue
 
@@ -145,10 +145,10 @@ def foaf2config(rdf, config, subject=None, section=None):
 def copy_options(config, parent_section, child_section, overrides = {}):
     global inheritable_options
     for option in [x for x in config.options(parent_section) if x in inheritable_options]:
-        if not overrides.has_key(option):
+        if option not in overrides:
             config.set(child_section, option, config.get(parent_section, option))
 
-    for option, value in overrides.items():
+    for option, value in list(overrides.items()):
         config.set(child_section, option, value)
 
 
@@ -186,12 +186,12 @@ def friend2config(friend_model, friend, seeAlso, subconfig, data):
                 return
 
 if __name__ == "__main__":
-    import sys, urllib
+    import sys, urllib.request, urllib.parse, urllib.error
     config = ConfigParser()
 
     for uri in sys.argv[1:]:
         config.add_section(uri)
-        foaf2config(urllib.urlopen(uri), config, section=uri)
+        foaf2config(urllib.request.urlopen(uri), config, section=uri)
         config.remove_section(uri)
 
     config.write(sys.stdout)

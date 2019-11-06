@@ -2,7 +2,7 @@
 
 import unittest, os, shutil
 from planet.foaf import foaf2config
-from ConfigParser import ConfigParser
+from configparser import ConfigParser
 from planet import config, logger
 
 workdir = 'tests/work/config/cache'
@@ -120,7 +120,7 @@ try:
     import RDF
 except:
     logger.warn("Redland RDF is not available => can't test FOAF reading lists")
-    for key in FoafTest.__dict__.keys():
+    for key in list(FoafTest.__dict__.keys()):
         if key.startswith('test_'): delattr(FoafTest, key)
 
 if __name__ == '__main__':

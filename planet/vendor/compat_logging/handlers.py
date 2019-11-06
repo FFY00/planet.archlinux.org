@@ -26,9 +26,9 @@ Copyright (C) 2001-2002 Vinay Sajip. All Rights Reserved.
 To use, simply 'import logging' and log away!
 """
 
-import sys, logging, socket, types, os, string, cPickle, struct, time
+import sys, logging, socket, types, os, string, pickle, struct, time
 
-from SocketServer import ThreadingTCPServer, StreamRequestHandler
+from socketserver import ThreadingTCPServer, StreamRequestHandler
 
 #
 # Some constants...
@@ -164,7 +164,7 @@ class SocketHandler(logging.Handler):
         Pickles the record in binary format with a length prefix, and
         returns it ready for transmission across the socket.
         """
-        s = cPickle.dumps(record.__dict__, 1)
+        s = pickle.dumps(record.__dict__, 1)
         #n = len(s)
         #slen = "%c%c" % ((n >> 8) & 0xFF, n & 0xFF)
         slen = struct.pack(">L", len(s))
@@ -345,7 +345,7 @@ class SysLogHandler(logging.Handler):
 
         self.address = address
         self.facility = facility
-        if type(address) == types.StringType:
+        if type(address) == bytes:
             self.socket = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
             # syslog may require either DGRAM or STREAM sockets
             try:
@@ -374,9 +374,9 @@ class SysLogHandler(logging.Handler):
         priority_names mapping dictionaries are used to convert them to
         integers.
         """
-        if type(facility) == types.StringType:
+        if type(facility) == bytes:
             facility = self.facility_names[facility]
-        if type(priority) == types.StringType:
+        if type(priority) == bytes:
             priority = self.priority_names[priority]
         return (facility << 3) | priority
 
@@ -424,7 +424,7 @@ class SMTPHandler(logging.Handler):
         (host, port) tuple format for the mailhost argument.
         """
         logging.Handler.__init__(self)
-        if type(mailhost) == types.TupleType:
+        if type(mailhost) == tuple:
             host, port = mailhost
             self.mailhost = host
             self.mailport = port
@@ -432,7 +432,7 @@ class SMTPHandler(logging.Handler):
             self.mailhost = mailhost
             self.mailport = None
         self.fromaddr = fromaddr
-        if type(toaddrs) == types.StringType:
+        if type(toaddrs) == bytes:
             toaddrs = [toaddrs]
         self.toaddrs = toaddrs
         self.subject = subject
@@ -516,8 +516,8 @@ class NTEventLogHandler(logging.Handler):
                 logging.CRITICAL: win32evtlog.EVENTLOG_ERROR_TYPE,
          }
         except ImportError:
-            print "The Python Win32 extensions for NT (service, event "\
-                        "logging) appear not to be available."
+            print("The Python Win32 extensions for NT (service, event "\
+                        "logging) appear not to be available.")
             self._welu = None
 
     def getMessageID(self, record):
@@ -595,7 +595,7 @@ class HTTPHandler(logging.Handler):
         logging.Handler.__init__(self)
         method = string.upper(method)
         if method not in ["GET", "POST"]:
-            raise ValueError, "method must be GET or POST"
+            raise ValueError("method must be GET or POST")
         self.host = host
         self.url = url
         self.method = method
@@ -615,10 +615,10 @@ class HTTPHandler(logging.Handler):
         Send the record to the Web server as an URL-encoded dictionary
         """
         try:
-            import httplib, urllib
-            h = httplib.HTTP(self.host)
+            import http.client, urllib.request, urllib.parse, urllib.error
+            h = http.client.HTTP(self.host)
             url = self.url
-            data = urllib.urlencode(self.mapLogRecord(record))
+            data = urllib.parse.urlencode(self.mapLogRecord(record))
             if self.method == "GET":
                 if (string.find(url, '?') >= 0):
                     sep = '&'

@@ -1,10 +1,10 @@
 import sys, socket
 from planet import config, feedparser
 from planet.spider import filename
-from urllib2 import urlopen
-from urlparse import urljoin
+from urllib.request import urlopen
+from urllib.parse import urljoin
 from html5lib import html5parser, treebuilders
-from ConfigParser import ConfigParser
+from configparser import ConfigParser
 
 # load config files (default: config.ini)
 for arg in sys.argv[1:]:
@@ -12,7 +12,7 @@ for arg in sys.argv[1:]:
 if len(sys.argv) == 1:
   config.load('config.ini')
 
-from Queue import Queue
+from queue import Queue
 from threading import Thread
 
 # determine which subscriptions have no icon but do have a html page
@@ -73,7 +73,7 @@ else:
 
 # produce config file
 config = ConfigParser()
-for sub, icon in icons.items():
+for sub, icon in list(icons.items()):
   config.add_section(sub)
   config.set(sub, 'favicon', icon)
 config.write(sys.stdout)

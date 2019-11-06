@@ -1,5 +1,6 @@
 #!/usr/bin/env python2
-import os, sys, ConfigParser, shutil, glob
+import os, sys, configparser, shutil, glob
+from functools import reduce
 venus_base = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0,venus_base)
 
@@ -18,7 +19,7 @@ if __name__ == "__main__":
         else:
             break
 
-    parser = ConfigParser.ConfigParser()
+    parser = configparser.ConfigParser()
     parser.add_section('Planet')
     parser.add_section(sys.argv[1])
     work = reduce(os.path.join, ['tests','work','reconsititute'], venus_base)
@@ -44,14 +45,14 @@ if __name__ == "__main__":
     import feedparser
     for source in glob.glob(os.path.join(work, 'sources/*')):
         feed = feedparser.parse(source).feed
-        if feed.has_key('title'):
+        if 'title' in feed:
             config.parser.set('Planet','name',feed.title_detail.value)
-        if feed.has_key('link'):
+        if 'link' in feed:
             config.parser.set('Planet','link',feed.link)
-        if feed.has_key('author_detail'):
-            if feed.author_detail.has_key('name'):
+        if 'author_detail' in feed:
+            if 'name' in feed.author_detail:
                 config.parser.set('Planet','owner_name',feed.author_detail.name)
-            if feed.author_detail.has_key('email'):
+            if 'email' in feed.author_detail:
                 config.parser.set('Planet','owner_email',feed.author_detail.email)
 
     from planet import splice
@@ -85,4 +86,4 @@ if __name__ == "__main__":
     shutil.rmtree(work)
     os.removedirs(os.path.dirname(work))
 
-    print atom
+    print(atom)

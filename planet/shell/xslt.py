@@ -2,7 +2,7 @@ import os
 
 def quote(string, apos):
     """ quote a string so that it can be passed as a parameter """
-    if type(string) == unicode:
+    if type(string) == str:
         string=string.encode('utf-8')
     if apos.startswith("\\"): string.replace('\\','\\\\')
 
@@ -32,7 +32,7 @@ def run(script, doc, output_file=None, options={}):
     if dom:
         styledoc = libxml2.parseFile(script)
         style = libxslt.parseStylesheetDoc(styledoc)
-        for key in options.keys():
+        for key in list(options.keys()):
             options[key] = quote(options[key], apos="\xe2\x80\x99")
         output = style.applyStylesheet(dom, options)
         if output_file:
@@ -51,7 +51,7 @@ def run(script, doc, output_file=None, options={}):
         file.close()
 
         cmdopts = []
-        for key,value in options.items():
+        for key,value in list(options.items()):
            if value.find("'")>=0 and value.find('"')>=0: continue
            cmdopts += ['--stringparam', key, quote(value, apos=r"\'")]
 
@@ -63,7 +63,7 @@ def run(script, doc, output_file=None, options={}):
         from subprocess import Popen, PIPE
 
         options = sum([['--stringparam', key, value]
-            for key,value in options.items()], [])
+            for key,value in list(options.items())], [])
 
         proc = Popen(['xsltproc'] + options + [script, '-'],
             stdin=PIPE, stdout=PIPE, stderr=PIPE)

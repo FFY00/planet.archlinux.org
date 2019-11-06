@@ -31,10 +31,10 @@ class SpiderTest(unittest.TestCase):
             filename('.', 'http://example.com/index.html'))
         self.assertEqual(os.path.join('.',
             'planet.intertwingly.net,2006,testfeed1,1'),
-            filename('.', u'tag:planet.intertwingly.net,2006:testfeed1,1'))
+            filename('.', 'tag:planet.intertwingly.net,2006:testfeed1,1'))
         self.assertEqual(os.path.join('.',
             '00000000-0000-0000-0000-000000000000'),
-            filename('.', u'urn:uuid:00000000-0000-0000-0000-000000000000'))
+            filename('.', 'urn:uuid:00000000-0000-0000-0000-000000000000'))
 
         # Requires Python 2.3
         try:
@@ -42,7 +42,7 @@ class SpiderTest(unittest.TestCase):
         except:
             return
         self.assertEqual(os.path.join('.', 'xn--8ws00zhy3a.com'),
-            filename('.', u'http://www.\u8a79\u59c6\u65af.com/'))
+            filename('.', 'http://www.\u8a79\u59c6\u65af.com/'))
 
     def spiderFeed(self, feed_uri):
         feed_info = feedparser.parse('<feed/>')
@@ -115,7 +115,7 @@ class SpiderTest(unittest.TestCase):
         self.assertEqual(2, len(glob.glob(workdir+"/*")))
         data = feedparser.parse(workdir + 
             '/planet.intertwingly.net,2006,testfeed4')
-        self.assertEqual(u'three', data.entries[0].content[0].value)
+        self.assertEqual('three', data.entries[0].content[0].value)
 
     def verify_spiderPlanet(self):
         files = glob.glob(workdir+"/*")
@@ -146,7 +146,7 @@ class SpiderTest(unittest.TestCase):
         _PORT = config.parser.getint('Planet','test_port')
 
         log = []
-        from SimpleHTTPServer import SimpleHTTPRequestHandler
+        from http.server import SimpleHTTPRequestHandler
         class TestRequestHandler(SimpleHTTPRequestHandler):
             def log_message(self, format, *args):
                 log.append(args)
@@ -158,7 +158,7 @@ class SpiderTest(unittest.TestCase):
               self.done = 0
               Thread.__init__(self)
           def run(self):
-              from BaseHTTPServer import HTTPServer
+              from http.server import HTTPServer
               httpd = HTTPServer(('',_PORT), TestRequestHandler)
               self.ready = 1
               while not self.done:
@@ -173,8 +173,8 @@ class SpiderTest(unittest.TestCase):
             spiderPlanet()
         finally:
             httpd.done = 1
-            import urllib
-            urllib.urlopen('http://127.0.0.1:%d/' % _PORT).read()
+            import urllib.request, urllib.parse, urllib.error
+            urllib.request.urlopen('http://127.0.0.1:%d/' % _PORT).read()
 
         status = [int(rec[1]) for rec in log if str(rec[0]).startswith('GET ')]
         status.sort()

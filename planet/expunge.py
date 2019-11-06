@@ -1,7 +1,7 @@
 """ Expunge old entries from a cache of entries """
 import glob, os, planet, config, feedparser
 from xml.dom import minidom
-from spider import filename
+from .spider import filename
 
 def expungeCache():
     """ Expunge old entries from a cache of entries """
@@ -12,8 +12,8 @@ def expungeCache():
     sources = config.cache_sources_directory()
     for sub in config.subscriptions():
         data=feedparser.parse(filename(sources,sub))
-        if not data.feed.has_key('id'): continue
-        if config.feed_options(sub).has_key('cache_keep_entries'):
+        if 'id' not in data.feed: continue
+        if 'cache_keep_entries' in config.feed_options(sub):
             entry_count[data.feed.id] = int(config.feed_options(sub)['cache_keep_entries'])
         else:
             entry_count[data.feed.id] = config.cache_keep_entries()

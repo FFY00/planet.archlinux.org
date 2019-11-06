@@ -26,10 +26,10 @@ Copyright (C) 2001-2002 Vinay Sajip. All Rights Reserved.
 To use, simply 'import logging' and log away!
 """
 
-import sys, os, types, time, string, cStringIO
+import sys, os, types, time, string, io
 
 try:
-    import thread
+    import _thread
     import threading
 except ImportError:
     thread = None
@@ -200,10 +200,10 @@ class LogRecord:
         self.exc_info = exc_info
         self.lineno = lineno
         self.created = ct
-        self.msecs = (ct - long(ct)) * 1000
+        self.msecs = (ct - int(ct)) * 1000
         self.relativeCreated = (self.created - _startTime) * 1000
         if thread:
-            self.thread = thread.get_ident()
+            self.thread = _thread.get_ident()
         else:
             self.thread = None
         if hasattr(os, 'getpid'):
@@ -338,7 +338,7 @@ class Formatter:
         traceback.print_exception()
         """
         import traceback
-        sio = cStringIO.StringIO()
+        sio = io.StringIO()
         traceback.print_exception(ei[0], ei[1], ei[2], None, sio)
         s = sio.getvalue()
         sio.close()
@@ -529,7 +529,7 @@ class Handler(Filterer):
         Acquire a thread lock for serializing access to the underlying I/O.
         """
         if thread:
-            self.lock = thread.allocate_lock()
+            self.lock = _thread.allocate_lock()
         else:
             self.lock = None
 
@@ -573,8 +573,8 @@ class Handler(Filterer):
         This version is intended to be implemented by subclasses and so
         raises a NotImplementedError.
         """
-        raise NotImplementedError, 'emit must be implemented '\
-                                    'by Handler subclasses'
+        raise NotImplementedError('emit must be implemented '\
+                                    'by Handler subclasses')
 
     def handle(self, record):
         """
@@ -737,8 +737,8 @@ def setLoggerClass(klass):
     """
     if klass != Logger:
         if not issubclass(klass, Logger):
-            raise TypeError, "logger not derived from logging.Logger: " + \
-                            klass.__name__
+            raise TypeError("logger not derived from logging.Logger: " + \
+                            klass.__name__)
     global _loggerClass
     _loggerClass = klass
 
@@ -769,7 +769,7 @@ class Manager:
         rv = None
         _acquireLock()
         try:
-            if self.loggerDict.has_key(name):
+            if name in self.loggerDict:
                 rv = self.loggerDict[name]
                 if isinstance(rv, PlaceHolder):
                     ph = rv
@@ -797,7 +797,7 @@ class Manager:
         rv = None
         while (i > 0) and not rv:
             substr = name[:i]
-            if not self.loggerDict.has_key(substr):
+            if substr not in self.loggerDict:
                 self.loggerDict[substr] = PlaceHolder(alogger)
             else:
                 obj = self.loggerDict[substr]
@@ -817,7 +817,7 @@ class Manager:
         specified logger.
         """
         for c in ph.loggers:
-            if string.find(c.parent.name, alogger.name) <> 0:
+            if string.find(c.parent.name, alogger.name) != 0:
                 alogger.parent = c.parent
                 c.parent = alogger
 
@@ -876,7 +876,7 @@ class Logger(Filterer):
         if self.manager.disable >= DEBUG:
             return
         if DEBUG >= self.getEffectiveLevel():
-            apply(self._log, (DEBUG, msg, args), kwargs)
+            self._log(*(DEBUG, msg, args), **kwargs)
 
     def info(self, msg, *args, **kwargs):
         """
@@ -890,7 +890,7 @@ class Logger(Filterer):
         if self.manager.disable >= INFO:
             return
         if INFO >= self.getEffectiveLevel():
-            apply(self._log, (INFO, msg, args), kwargs)
+            self._log(*(INFO, msg, args), **kwargs)
 
     def warning(self, msg, *args, **kwargs):
         """
@@ -904,7 +904,7 @@ class Logger(Filterer):
         if self.manager.disable >= WARNING:
             return
         if self.isEnabledFor(WARNING):
-            apply(self._log, (WARNING, msg, args), kwargs)
+            self._log(*(WARNING, msg, args), **kwargs)
 
     warn = warning
 
@@ -920,13 +920,13 @@ class Logger(Filterer):
         if self.manager.disable >= ERROR:
             return
         if self.isEnabledFor(ERROR):
-            apply(self._log, (ERROR, msg, args), kwargs)
+            self._log(*(ERROR, msg, args), **kwargs)
 
     def exception(self, msg, *args):
         """
         Convenience method for logging an ERROR with exception information.
         """
-        apply(self.error, (msg,) + args, {'exc_info': 1})
+        self.error(*(msg,) + args, **{'exc_info': 1})
 
     def critical(self, msg, *args, **kwargs):
         """
@@ -940,7 +940,7 @@ class Logger(Filterer):
         if self.manager.disable >= CRITICAL:
             return
         if CRITICAL >= self.getEffectiveLevel():
-            apply(self._log, (CRITICAL, msg, args), kwargs)
+            self._log(*(CRITICAL, msg, args), **kwargs)
 
     fatal = critical
 
@@ -956,7 +956,7 @@ class Logger(Filterer):
         if self.manager.disable >= level:
             return
         if self.isEnabledFor(level):
-            apply(self._log, (level, msg, args), kwargs)
+            self._log(*(level, msg, args), **kwargs)
 
     def findCaller(self):
         """
@@ -1133,7 +1133,7 @@ def critical(msg, *args, **kwargs):
     """
     if len(root.handlers) == 0:
         basicConfig()
-    apply(root.critical, (msg,)+args, kwargs)
+    root.critical(*(msg,)+args, **kwargs)
 
 fatal = critical
 
@@ -1143,14 +1143,14 @@ def error(msg, *args, **kwargs):
     """
     if len(root.handlers) == 0:
         basicConfig()
-    apply(root.error, (msg,)+args, kwargs)
+    root.error(*(msg,)+args, **kwargs)
 
 def exception(msg, *args):
     """
     Log a message with severity 'ERROR' on the root logger,
     with exception information.
     """
-    apply(error, (msg,)+args, {'exc_info': 1})
+    error(*(msg,)+args, **{'exc_info': 1})
 
 def warning(msg, *args, **kwargs):
     """
@@ -1158,7 +1158,7 @@ def warning(msg, *args, **kwargs):
     """
     if len(root.handlers) == 0:
         basicConfig()
-    apply(root.warning, (msg,)+args, kwargs)
+    root.warning(*(msg,)+args, **kwargs)
 
 warn = warning
 
@@ -1168,7 +1168,7 @@ def info(msg, *args, **kwargs):
     """
     if len(root.handlers) == 0:
         basicConfig()
-    apply(root.info, (msg,)+args, kwargs)
+    root.info(*(msg,)+args, **kwargs)
 
 def debug(msg, *args, **kwargs):
     """
@@ -1176,7 +1176,7 @@ def debug(msg, *args, **kwargs):
     """
     if len(root.handlers) == 0:
         basicConfig()
-    apply(root.debug, (msg,)+args, kwargs)
+    root.debug(*(msg,)+args, **kwargs)
 
 def disable(level):
     """
@@ -1191,6 +1191,6 @@ def shutdown():
 
     Should be called at application exit.
     """
-    for h in _handlers.keys():
+    for h in list(_handlers.keys()):
         h.flush()
         h.close()

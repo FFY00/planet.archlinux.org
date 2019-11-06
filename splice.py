@@ -14,5 +14,5 @@ if __name__ == '__main__':
         doc = splice.splice()
         splice.apply(doc.toxml('utf-8'))
     else:
-        print "Usage:"
-        print "  python %s config.ini" % sys.argv[0]
+        print("Usage:")
+        print("  python %s config.ini" % sys.argv[0])

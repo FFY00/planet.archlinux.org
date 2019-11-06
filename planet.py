@@ -27,16 +27,16 @@ if __name__ == "__main__":
 
     for arg in sys.argv[1:]:
         if arg == "-h" or arg == "--help":
-            print "Usage: planet [options] [CONFIGFILE]"
-            print
-            print "Options:"
-            print " -v, --verbose       DEBUG level logging during update"
-            print " -o, --offline       Update the Planet from the cache only"
-            print " -h, --help          Display this help message and exit"
-            print " -n, --only-if-new   Only spider new feeds"
-            print " -x, --expunge       Expunge old entries from cache"
-            print " --no-publish        Do not publish feeds using PubSubHubbub"
-            print
+            print("Usage: planet [options] [CONFIGFILE]")
+            print()
+            print("Options:")
+            print(" -v, --verbose       DEBUG level logging during update")
+            print(" -o, --offline       Update the Planet from the cache only")
+            print(" -h, --help          Display this help message and exit")
+            print(" -n, --only-if-new   Only spider new feeds")
+            print(" -x, --expunge       Expunge old entries from cache")
+            print(" --no-publish        Do not publish feeds using PubSubHubbub")
+            print()
             sys.exit(0)
         elif arg == "-v" or arg == "--verbose":
             verbose = 1
@@ -51,7 +51,7 @@ if __name__ == "__main__":
         elif arg == "--no-publish":
             no_publish = 1
         elif arg.startswith("-"):
-            print >>sys.stderr, "Unknown option:", arg
+            print("Unknown option:", arg, file=sys.stderr)
             sys.exit(1)
         else:
             config_file.append(arg)
@@ -67,8 +67,8 @@ if __name__ == "__main__":
         from planet import spider
         try:
             spider.spiderPlanet(only_if_new=only_if_new)
-        except Exception, e:
-            print e
+        except Exception as e:
+            print(e)
 
     from planet import splice
     doc = splice.splice()
@@ -79,7 +79,7 @@ if __name__ == "__main__":
         debug=open('debug.atom','w')
         try:
             from lxml import etree
-            from StringIO import StringIO
+            from io import StringIO
             tree = etree.tostring(etree.parse(StringIO(doc.toxml())))
             debug.write(etree.tostring(tree, pretty_print=True))
         except:

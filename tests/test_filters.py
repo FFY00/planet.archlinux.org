@@ -50,9 +50,9 @@ class FilterTests(unittest.TestCase):
 
         dom = xml.dom.minidom.parseString(output)
         excerpt = dom.getElementsByTagName('planet:excerpt')[0]
-        self.assertEqual(u'Lorem ipsum dolor sit amet, consectetuer ' +
-            u'adipiscing elit. Nullam velit. Vivamus tincidunt, erat ' +
-            u'in \u2026', excerpt.firstChild.firstChild.nodeValue)
+        self.assertEqual('Lorem ipsum dolor sit amet, consectetuer ' +
+            'adipiscing elit. Nullam velit. Vivamus tincidunt, erat ' +
+            'in \u2026', excerpt.firstChild.firstChild.nodeValue)
 
     def test_excerpt_lorem_ipsum_summary(self):
         testfile = 'tests/data/filter/excerpt-lorem-ipsum.xml'
@@ -65,9 +65,9 @@ class FilterTests(unittest.TestCase):
 
         dom = xml.dom.minidom.parseString(output)
         excerpt = dom.getElementsByTagName('summary')[0]
-        self.assertEqual(u'Lorem ipsum dolor sit amet, consectetuer ' +
-            u'adipiscing elit. Nullam velit. Vivamus tincidunt, erat ' +
-            u'in \u2026', excerpt.firstChild.firstChild.nodeValue)
+        self.assertEqual('Lorem ipsum dolor sit amet, consectetuer ' +
+            'adipiscing elit. Nullam velit. Vivamus tincidunt, erat ' +
+            'in \u2026', excerpt.firstChild.firstChild.nodeValue)
 
     def test_stripAd_yahoo(self):
         testfile = 'tests/data/filter/stripAd-yahoo.xml'
@@ -79,7 +79,7 @@ class FilterTests(unittest.TestCase):
 
         dom = xml.dom.minidom.parseString(output)
         excerpt = dom.getElementsByTagName('content')[0]
-        self.assertEqual(u'before--after',
+        self.assertEqual('before--after',
             excerpt.firstChild.firstChild.nodeValue)
 
     def test_xpath_filter1(self):
@@ -159,8 +159,8 @@ try:
     if _no_sed:
         try:
             # Python 2.5 bug 1704790 workaround (alas, Unix only)
-            import commands
-            if commands.getstatusoutput('sed --version')[0]==0: _no_sed = False 
+            import subprocess
+            if subprocess.getstatusoutput('sed --version')[0]==0: _no_sed = False 
         except:
             pass
 

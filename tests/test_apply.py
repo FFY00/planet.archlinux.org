@@ -103,7 +103,7 @@ class ApplyTest(unittest.TestCase):
         html = open(os.path.join(workdir, 'index.html')).read()
         self.assertTrue(html.find(' href="http://example.com/default.css"')>=0)
 
-import test_filter_genshi
+from . import test_filter_genshi
 for method in dir(test_filter_genshi.GenshiFilterTests):
     if method.startswith('test_'): break
 else:
@@ -125,8 +125,8 @@ except ImportError:
         except IOError:
             exitcode = -1
     except:
-        import commands
-        (exitstatus,output) = commands.getstatusoutput('xsltproc -V')
+        import subprocess
+        (exitstatus,output) = subprocess.getstatusoutput('xsltproc -V')
         exitcode = ((exitstatus>>8) & 0xFF)
 
     if exitcode:

@@ -30,8 +30,8 @@ except:
     try:
         try:
             # Python 2.5 bug 1704790 workaround (alas, Unix only)
-            import commands
-            if commands.getstatusoutput('xsltproc --version')[0] != 0:
+            import subprocess
+            if subprocess.getstatusoutput('xsltproc --version')[0] != 0:
                 raise ImportError
         except:
             from subprocess import Popen, PIPE

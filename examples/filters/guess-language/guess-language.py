@@ -18,39 +18,39 @@ import amara
 from sys import stdin, stdout
 from trigram import Trigram
 from xml.dom import XML_NAMESPACE as XML_NS
-import cPickle
+import pickle
 
 ATOM_NSS = {
-    u'atom': u'http://www.w3.org/2005/Atom',
-    u'xml': XML_NS
+    'atom': 'http://www.w3.org/2005/Atom',
+    'xml': XML_NS
 }
 
 langs = {}
 
 def tri(lang):
-    if not langs.has_key(lang):
+    if lang not in langs:
 	f = open('filters/guess-language/%s.data' % lang, 'r')
-	t = cPickle.load(f)
+	t = pickle.load(f)
 	f.close()
 	langs[lang] = t
     return langs[lang]
     
 
 def guess_language(entry):
-    text = u'';
-    for child in entry.xml_xpath(u'atom:title|atom:summary|atom:content'):
-	text = text + u' '+ child.__unicode__()
+    text = '';
+    for child in entry.xml_xpath('atom:title|atom:summary|atom:content'):
+	text = text + ' '+ child.__unicode__()
     t = Trigram()
     t.parseString(text)
     if tri('fr') - t > tri('en') - t:
-	lang=u'en'
+	lang='en'
     else:
-	lang=u'fr'
-    entry.xml_set_attribute((u'xml:lang', XML_NS), lang)
+	lang='fr'
+    entry.xml_set_attribute(('xml:lang', XML_NS), lang)
 
 def main():
     feed = amara.parse(stdin, prefixes=ATOM_NSS)
-    for entry in feed.xml_xpath(u'//atom:entry[not(@xml:lang)]'):
+    for entry in feed.xml_xpath('//atom:entry[not(@xml:lang)]'):
 	guess_language(entry)
     feed.xml(stdout)
 

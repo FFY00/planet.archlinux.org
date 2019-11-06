@@ -10,9 +10,9 @@ except:
 
 # more python 2.2 accomodations
 if not hasattr(unittest.TestCase, 'assertTrue'):
-    unittest.TestCase.assertTrue = unittest.TestCase.assert_
+    unittest.TestCase.assertTrue = unittest.TestCase.assertTrue
 if not hasattr(unittest.TestCase, 'assertFalse'):
-    unittest.TestCase.assertFalse = unittest.TestCase.failIf
+    unittest.TestCase.assertFalse = unittest.TestCase.assertFalse
 
 # try to start in a consistent, predictable location
 if sys.path[0]: os.chdir(sys.path[0])
@@ -28,7 +28,7 @@ for arg,value in (('-q',0),('--quiet',0),('-v',2),('--verbose',2)):
 # find all of the planet test modules
 modules = []
 for pattern in sys.argv[1:] or ['test_*.py']:
-    modules += map(fullmodname, glob.glob(os.path.join('tests', pattern)))
+    modules += list(map(fullmodname, glob.glob(os.path.join('tests', pattern))))
 
 # enable logging
 import planet
@@ -39,7 +39,7 @@ if verbosity == 2: planet.getLogger("DEBUG",None)
 # load all of the tests into a suite
 try:
     suite = unittest.TestLoader().loadTestsFromNames(modules)
-except Exception, exception:
+except Exception as exception:
     # attempt to produce a more specific message
     for module in modules: __import__(module)
     raise

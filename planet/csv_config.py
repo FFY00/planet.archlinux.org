@@ -1,4 +1,4 @@
-from ConfigParser import ConfigParser
+from configparser import ConfigParser
 import csv
 
 # input = csv, output = ConfigParser
@@ -15,7 +15,7 @@ def csv2config(input, config=None):
         section = row[reader.fieldnames[0]]
         if not config.has_section(section):
             config.add_section(section)
-        for name, value in row.items():
+        for name, value in list(row.items()):
             if value and name != reader.fieldnames[0]:
                 config.set(section, name, value) 
 
@@ -23,8 +23,8 @@ def csv2config(input, config=None):
 
 if __name__ == "__main__":
     # small main program which converts CSV into config.ini format
-    import sys, urllib
+    import sys, urllib.request, urllib.parse, urllib.error
     config = ConfigParser()
     for input in sys.argv[1:]:
-        csv2config(urllib.urlopen(input), config)
+        csv2config(urllib.request.urlopen(input), config)
     config.write(sys.stdout)

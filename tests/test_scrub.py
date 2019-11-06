@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 
-import unittest, StringIO, time
+import unittest, io, time
 from copy import deepcopy
 from planet.scrub import scrub
 from planet import feedparser, config
@@ -40,32 +40,32 @@ class ScrubTest(unittest.TestCase):
     def test_scrub_ignore(self):
         base = feedparser.parse(feed)
 
-        self.assertTrue(base.entries[0].has_key('author'))
-        self.assertTrue(base.entries[0].has_key('author_detail'))
-        self.assertTrue(base.entries[0].has_key('id'))
-        self.assertTrue(base.entries[0].has_key('updated'))
-        self.assertTrue(base.entries[0].has_key('updated_parsed'))
-        self.assertTrue(base.entries[0].summary_detail.has_key('language'))
+        self.assertTrue('author' in base.entries[0])
+        self.assertTrue('author_detail' in base.entries[0])
+        self.assertTrue('id' in base.entries[0])
+        self.assertTrue('updated' in base.entries[0])
+        self.assertTrue('updated_parsed' in base.entries[0])
+        self.assertTrue('language' in base.entries[0].summary_detail)
 
-        config.parser.readfp(StringIO.StringIO(configData))
+        config.parser.readfp(io.StringIO(configData))
         config.parser.set('testfeed', 'ignore_in_feed',
           'author id updated xml:lang')
         data = deepcopy(base)
         scrub('testfeed', data)
 
-        self.assertFalse(data.entries[0].has_key('author'))
-        self.assertFalse(data.entries[0].has_key('author_detail'))
-        self.assertFalse(data.entries[0].has_key('id'))
-        self.assertFalse(data.entries[0].has_key('updated'))
-        self.assertFalse(data.entries[0].has_key('updated_parsed'))
-        self.assertFalse(data.entries[0].summary_detail.has_key('language'))
+        self.assertFalse('author' in data.entries[0])
+        self.assertFalse('author_detail' in data.entries[0])
+        self.assertFalse('id' in data.entries[0])
+        self.assertFalse('updated' in data.entries[0])
+        self.assertFalse('updated_parsed' in data.entries[0])
+        self.assertFalse('language' in data.entries[0].summary_detail)
 
     def test_scrub_type(self):
         base = feedparser.parse(feed)
 
         self.assertEqual('F&ouml;o', base.feed.author_detail.name)
 
-        config.parser.readfp(StringIO.StringIO(configData))
+        config.parser.readfp(io.StringIO(configData))
         data = deepcopy(base)
         scrub('testfeed', data)
 
@@ -80,13 +80,13 @@ class ScrubTest(unittest.TestCase):
     def test_scrub_future(self):
         base = feedparser.parse(feed)
         self.assertEqual(1, len(base.entries))
-        self.assertTrue(base.entries[0].has_key('updated'))
+        self.assertTrue('updated' in base.entries[0])
 
-        config.parser.readfp(StringIO.StringIO(configData))
+        config.parser.readfp(io.StringIO(configData))
         config.parser.set('testfeed', 'future_dates', 'ignore_date')
         data = deepcopy(base)
         scrub('testfeed', data)
-        self.assertFalse(data.entries[0].has_key('updated'))
+        self.assertFalse('updated' in data.entries[0])
 
         config.parser.set('testfeed', 'future_dates', 'ignore_entry')
         data = deepcopy(base)
@@ -98,7 +98,7 @@ class ScrubTest(unittest.TestCase):
         self.assertEqual('http://example.com/',
              base.entries[0].title_detail.base)
 
-        config.parser.readfp(StringIO.StringIO(configData))
+        config.parser.readfp(io.StringIO(configData))
         config.parser.set('testfeed', 'xml_base', 'feed_alternate')
         data = deepcopy(base)
         scrub('testfeed', data)

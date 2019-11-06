@@ -11,7 +11,7 @@ f = open("my_document.html")
 tree = html5lib.parse(f) 
 """
 __version__ = "%(version)s"
-from html5parser import HTMLParser, parse, parseFragment
-from treebuilders import getTreeBuilder
-from treewalkers import getTreeWalker
-from serializer import serialize
+from .html5parser import HTMLParser, parse, parseFragment
+from .treebuilders import getTreeBuilder
+from .treewalkers import getTreeWalker
+from .serializer import serialize

@@ -20,7 +20,7 @@ from xml.dom import Node, minidom
 atomNS = 'http://www.w3.org/2005/Atom'
 planetNS = 'http://planet.intertwingly.net/'
 
-args = dict(zip([name.lstrip('-') for name in sys.argv[1::2]], sys.argv[2::2]))
+args = dict(list(zip([name.lstrip('-') for name in sys.argv[1::2]], sys.argv[2::2])))
 
 wrapper = textwrap.TextWrapper(width=int(args.get('width','500')))
 omit = args.get('omit', '').split()
@@ -84,7 +84,7 @@ class copy:
             target.appendChild(self.dom.createTextNode(source))
             self.textlen = len(lines[0])
         elif lines:
-            excerpt = source[:len(lines[0])-self.textlen] + u' \u2026'
+            excerpt = source[:len(lines[0])-self.textlen] + ' \u2026'
             target.appendChild(dom.createTextNode(excerpt))
             self.full = True
 
@@ -106,4 +106,4 @@ if source:
         source[0].parentNode.removeChild(source[0])
 
 # print out results
-print dom.toxml('utf-8')
+print(dom.toxml('utf-8'))

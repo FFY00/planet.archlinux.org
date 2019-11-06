@@ -12,7 +12,7 @@ __license__ = "Python"
 
 from trigram import Trigram
 from sys import argv
-from cPickle import dump
+from pickle import dump
 
 
 def main():

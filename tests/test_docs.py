@@ -3,7 +3,7 @@
 import unittest, os, re
 from xml.dom import minidom
 from glob import glob
-from htmlentitydefs import name2codepoint as n2cp
+from html.entities import name2codepoint as n2cp
 
 class DocsTest(unittest.TestCase):
 

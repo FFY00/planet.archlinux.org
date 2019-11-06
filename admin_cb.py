@@ -5,7 +5,7 @@ import cgi
 import cgitb
 cgitb.enable()
 
-from urllib import unquote
+from urllib.parse import unquote
 import sys, os
 
 # Modify this to point to where you usually run planet.
@@ -43,13 +43,13 @@ form = cgi.FieldStorage()
 
 
 # Start HTML output at once
-print "Content-Type: text/html;charset=utf-8"     # HTML is following
-print                                             # blank line, end of headers
+print("Content-Type: text/html;charset=utf-8")     # HTML is following
+print()                                             # blank line, end of headers
 
 
-print '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'
-print '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="sv"><head><meta http-equiv="Content-Type" content="text/html;charset=utf-8" /><title>Admin results</title></head><body>'
-print '<div>'
+print('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">')
+print('<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="sv"><head><meta http-equiv="Content-Type" content="text/html;charset=utf-8" /><title>Admin results</title></head><body>')
+print('<div>')
 
 # Cache and blacklist dirs
 
@@ -58,7 +58,7 @@ blacklist = config.cache_blacklist_directory()
 
 # Must have command parameter
 if not "command" in form:
-  print "<p>Unknown command</p>"
+  print("<p>Unknown command</p>")
 
 elif form['command'].value == "blacklist":
 
@@ -66,11 +66,11 @@ elif form['command'].value == "blacklist":
   # Create the blacklist dir if it does not exist
   if not os.path.exists(blacklist):
     os.mkdir(blacklist)
-    print "<p>Created directory %s</p>" % blacklist
+    print("<p>Created directory %s</p>" % blacklist)
   
   # find list of urls, in the form bl[n]=url
 
-  for key in form.keys():
+  for key in list(form.keys()):
 
     if not key.startswith("bl"): continue
 
@@ -85,17 +85,17 @@ elif form['command'].value == "blacklist":
 
       os.rename(cache_file, blacklist_file)
 
-      print "<p>Blacklisted <a href='%s'>%s</a></p>" % (url, url)
+      print("<p>Blacklisted <a href='%s'>%s</a></p>" % (url, url))
 
     else:
 
-      print "<p>Unknown file: %s</p>" % cache_file
+      print("<p>Unknown file: %s</p>" % cache_file)
 
-    print """
+    print("""
 <p>Note that blacklisting does not automatically 
 refresh the planet. You will need to either wait for
 a scheduled planet run, or refresh manually from the admin interface.</p>
-"""
+""")
 
 
 elif form['command'].value == "run":
@@ -105,9 +105,9 @@ elif form['command'].value == "run":
   from planet import spider, splice
   try:
      spider.spiderPlanet(only_if_new=False)
-     print "<p>Successfully ran spider</p>"
-  except Exception, e:
-     print e
+     print("<p>Successfully ran spider</p>")
+  except Exception as e:
+     print(e)
 
   doc = splice.splice()
   splice.apply(doc.toxml('utf-8'))
@@ -121,7 +121,7 @@ elif form['command'].value == "refresh":
   doc = splice.splice()
   splice.apply(doc.toxml('utf-8'))
 
-  print "<p>Successfully refreshed</p>"
+  print("<p>Successfully refreshed</p>")
 
 elif form['command'].value == "expunge":
 
@@ -129,13 +129,13 @@ elif form['command'].value == "expunge":
   from planet import expunge
   expunge.expungeCache()
 
-  print "<p>Successfully expunged</p>"
+  print("<p>Successfully expunged</p>")
 
 
 
 
-print "<p><strong><a href='" + ADMIN_URL + "'>Return</a> to admin interface</strong></p>"
+print("<p><strong><a href='" + ADMIN_URL + "'>Return</a> to admin interface</strong></p>")
 
 
 
-print "</body></html>"
+print("</body></html>")

@@ -9,7 +9,7 @@ def run(script, doc, output_file=None, options={}):
     else:
         out = PIPE
 
-    options = sum([['--'+key, value] for key,value in options.items()], [])
+    options = sum([['--'+key, value] for key,value in list(options.items())], [])
 
     proc = Popen([sys.executable, script] + options,
         stdin=PIPE, stdout=out, stderr=PIPE)

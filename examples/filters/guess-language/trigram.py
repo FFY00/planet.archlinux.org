@@ -12,7 +12,7 @@ __authors__ = [ "Douglas Bagnall", "Eric van der Vlist <vdv@dyomedea.com>"]
 __license__ = "Python"
 
 import random
-from urllib import urlopen
+from urllib.request import urlopen
 
 class Trigram:
     """
@@ -98,8 +98,8 @@ class Trigram:
         """calculates the scalar length of the trigram vector and
         stores it in self.length."""
         total = 0
-        for y in self.lut.values():
-            total += sum([ x * x for x in y.values() ])
+        for y in list(self.lut.values()):
+            total += sum([ x * x for x in list(y.values()) ])
         self.length = total ** 0.5
 
     def similarity(self, other):
@@ -112,7 +112,7 @@ class Trigram:
         lut1 = self.lut
         lut2 = other.lut
         total = 0
-        for k in lut1.keys():
+        for k in list(lut1.keys()):
             if k in lut2:
                 a = lut1[k]
                 b = lut2[k]
@@ -148,7 +148,7 @@ class Trigram:
             return ' '
         # if you were using this a lot, caching would a good idea.
         letters = []
-        for k, v in self.lut[k].items():
+        for k, v in list(self.lut[k].items()):
             letters.append(k * v)
         letters = ''.join(letters)
         return random.choice(letters)
@@ -165,23 +165,23 @@ def test():
     no2 = Trigram('http://gutenberg.net/dirs/1/3/0/4/13041/13041-8.txt')
     en2 = Trigram('http://gutenberg.net/dirs/etext05/cfgsh10.txt')
     fr2 = Trigram('http://gutenberg.net/dirs/1/3/7/0/13704/13704-8.txt')
-    print "calculating difference:"
-    print "en - fr is %s" % (en - fr)
-    print "fr - en is %s" % (fr - en)
-    print "en - en2 is %s" % (en - en2)
-    print "en - fr2 is %s" % (en - fr2)
-    print "fr - en2 is %s" % (fr - en2)
-    print "fr - fr2 is %s" % (fr - fr2)
-    print "fr2 - en2 is %s" % (fr2 - en2)
-    print "fi - fr  is %s" % (fi - fr)
-    print "fi - en  is %s" % (fi - en)
-    print "fi - se  is %s" % (fi - se)
-    print "no - se  is %s" % (no - se)
-    print "en - no  is %s" % (en - no)
-    print "no - no2  is %s" % (no - no2)
-    print "se - no2  is %s" % (se - no2)
-    print "en - no2  is %s" % (en - no2)
-    print "fr - no2  is %s" % (fr - no2)
+    print("calculating difference:")
+    print("en - fr is %s" % (en - fr))
+    print("fr - en is %s" % (fr - en))
+    print("en - en2 is %s" % (en - en2))
+    print("en - fr2 is %s" % (en - fr2))
+    print("fr - en2 is %s" % (fr - en2))
+    print("fr - fr2 is %s" % (fr - fr2))
+    print("fr2 - en2 is %s" % (fr2 - en2))
+    print("fi - fr  is %s" % (fi - fr))
+    print("fi - en  is %s" % (fi - en))
+    print("fi - se  is %s" % (fi - se))
+    print("no - se  is %s" % (no - se))
+    print("en - no  is %s" % (en - no))
+    print("no - no2  is %s" % (no - no2))
+    print("se - no2  is %s" % (se - no2))
+    print("en - no2  is %s" % (en - no2))
+    print("fr - no2  is %s" % (fr - no2))
 
 
 if __name__ == '__main__':

@@ -1,8 +1,8 @@
 import os.path
-import urlparse
+import urllib.parse
 import datetime
 
-import tmpl
+from . import tmpl
 from planet import config
 
 def DjangoPlanetDate(value):
@@ -39,10 +39,10 @@ def run(script, doc, output_file=None, options={}):
 
     if output_file:
         reluri = os.path.splitext(os.path.basename(output_file))[0]
-        context['url'] = urlparse.urljoin(config.link(),reluri)
+        context['url'] = urllib.parse.urljoin(config.link(),reluri)
         f = open(output_file, 'w')
         ss = t.render(context)
-        if isinstance(ss,unicode): ss=ss.encode('utf-8')
+        if isinstance(ss,str): ss=ss.encode('utf-8')
         f.write(ss)
         f.close()
     else:

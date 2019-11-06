@@ -33,4 +33,4 @@ if first < minhead:
       oldhead.parentNode.replaceChild(newhead, oldhead)
 
 # return (possibly modified) document
-print doc.toxml('utf-8')
+print(doc.toxml('utf-8'))

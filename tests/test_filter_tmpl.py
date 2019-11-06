@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 
-import unittest, os, sys, glob, new, re, StringIO, time
+import unittest, os, sys, glob, new, re, io, time
 from planet import config
 from planet.shell import tmpl
 
@@ -19,7 +19,7 @@ class FilterTmplTest(unittest.TestCase):
             description, expect = self.desc_feed_re.search(data).groups()
             testcase.close()
         except:
-            raise RuntimeError, "can't parse %s" % name
+            raise RuntimeError("can't parse %s" % name)
 
         # map to template info
         results = tmpl.template_info(data)
@@ -39,7 +39,7 @@ class FilterTmplTest(unittest.TestCase):
             description, expect = self.desc_config_re.search(data).groups()
             testcase.close()
         except:
-            raise RuntimeError, "can't parse %s" % name
+            raise RuntimeError("can't parse %s" % name)
 
         # map to template info
         config.load(testfiles % (name,'ini'))

@@ -2,7 +2,7 @@
 
 import unittest
 from planet.opml import opml2config
-from ConfigParser import ConfigParser
+from configparser import ConfigParser
 
 class OpmlTest(unittest.TestCase):
     """

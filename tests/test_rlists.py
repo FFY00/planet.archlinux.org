@@ -4,7 +4,7 @@ import unittest, os, shutil
 from planet import config, opml
 from os.path import split
 from glob import glob
-from ConfigParser import ConfigParser
+from configparser import ConfigParser
 
 workdir = os.path.join('tests', 'work', 'config', 'cache')
 

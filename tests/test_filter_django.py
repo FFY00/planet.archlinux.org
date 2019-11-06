@@ -25,7 +25,7 @@ class DjangoFilterTests(unittest.TestCase):
         results = dj.run(
             os.path.realpath('tests/data/filter/django/title.html.dj'), input)
         self.assertEqual(results, 
-          u"\xa1Atom-Powered &lt;b&gt;Robots&lt;/b&gt; Run Amok!\n")
+          "\xa1Atom-Powered &lt;b&gt;Robots&lt;/b&gt; Run Amok!\n")
 
     def test_django_entry_title_autoescape_off(self):
         config.load('tests/data/filter/django/test.ini')
@@ -34,7 +34,7 @@ class DjangoFilterTests(unittest.TestCase):
         input = feed.read(); feed.close()
         results = dj.run(
             os.path.realpath('tests/data/filter/django/title.html.dj'), input)
-        self.assertEqual(results, u"\xa1Atom-Powered <b>Robots</b> Run Amok!\n")
+        self.assertEqual(results, "\xa1Atom-Powered <b>Robots</b> Run Amok!\n")
 
     def test_django_config_context(self):
         config.load('tests/data/filter/django/test.ini')

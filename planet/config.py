@@ -26,9 +26,9 @@ Todo:
   * error handling (example: no planet section)
 """
 
-import os, sys, re, urllib
-from ConfigParser import ConfigParser
-from urlparse import urljoin
+import os, sys, re, urllib.request, urllib.parse, urllib.error
+from configparser import ConfigParser
+from urllib.parse import urljoin
 
 parser = ConfigParser()
 
@@ -36,7 +36,7 @@ planet_predefined_options = ['filters']
 
 def __init__():
     """define the struture of an ini file"""
-    import config
+    from . import config
 
     # get an option from a section
     def get(section, option, default):
@@ -209,8 +209,8 @@ def load(config_files):
                 cached_config.readfp(data)
             else:
                 from planet import shell
-                import StringIO
-                cached_config.readfp(StringIO.StringIO(shell.run(
+                import io
+                cached_config.readfp(io.StringIO(shell.run(
                     content_type(list), data.getvalue(), mode="filter")))
 
             if cached_config.sections() in [[], [list]]: 
@@ -221,10 +221,10 @@ def load(config_files):
 
 def downloadReadingList(list, orig_config, callback, use_cache=True, re_read=True):
     from planet import logger
-    import config
+    from . import config
     try:
 
-        import urllib2, StringIO
+        import urllib.request, urllib.error, urllib.parse, io
         from planet.spider import filename
 
         # list cache file name
@@ -248,7 +248,7 @@ def downloadReadingList(list, orig_config, callback, use_cache=True, re_read=Tru
 
         cached_config = ConfigParser()
         cached_config.add_section(list)
-        for key, value in options.items():
+        for key, value in list(options.items()):
             cached_config.set(list, key, value)
 
         # read list
@@ -259,21 +259,21 @@ def downloadReadingList(list, orig_config, callback, use_cache=True, re_read=Tru
             path = os.path.abspath(os.path.curdir)
             base = urljoin('file:///', path.replace(':','|').replace('\\','/'))
 
-        request = urllib2.Request(urljoin(base + '/', list))
-        if options.has_key("etag"):
+        request = urllib.request.Request(urljoin(base + '/', list))
+        if "etag" in options:
             request.add_header('If-None-Match', options['etag'])
-        if options.has_key("last-modified"):
+        if "last-modified" in options:
             request.add_header('If-Modified-Since',
                 options['last-modified'])
-        response = urllib2.urlopen(request)
-        if response.headers.has_key('etag'):
+        response = urllib.request.urlopen(request)
+        if 'etag' in response.headers:
             cached_config.set(list, 'etag', response.headers['etag'])
-        if response.headers.has_key('last-modified'):
+        if 'last-modified' in response.headers:
             cached_config.set(list, 'last-modified',
                 response.headers['last-modified'])
 
         # convert to config.ini
-        data = StringIO.StringIO(response.read())
+        data = io.StringIO(response.read())
 
         if callback: callback(data, cached_config)
 
@@ -289,7 +289,7 @@ def downloadReadingList(list, orig_config, callback, use_cache=True, re_read=Tru
             if use_cache:  
                 orig_config.read(cache_filename)
             else:
-                cdata = StringIO.StringIO()
+                cdata = io.StringIO()
                 cached_config.write(cdata)
                 cdata.seek(0)
                 orig_config.readfp(cdata)
@@ -299,7 +299,7 @@ def downloadReadingList(list, orig_config, callback, use_cache=True, re_read=Tru
                 if use_cache:  
                     if not orig_config.read(cache_filename): raise Exception()
                 else:
-                    cdata = StringIO.StringIO()
+                    cdata = io.StringIO()
                     cached_config.write(cdata)
                     cdata.seek(0)
                     orig_config.readfp(cdata)
@@ -373,12 +373,12 @@ def filters(section=None):
     filters = []
     if parser.has_option('Planet', 'filters'):
         filters += parser.get('Planet', 'filters').split()
-    if filter(section):
+    if list(filter(section)):
         filters.append('regexp_sifter.py?require=' +
-            urllib.quote(filter(section)))
+            urllib.parse.quote(list(filter(section))))
     if exclude(section):
         filters.append('regexp_sifter.py?exclude=' +
-            urllib.quote(exclude(section)))
+            urllib.parse.quote(exclude(section)))
     for section in section and [section] or template_files():
         if parser.has_option(section, 'filters'):
             filters += parser.get(section, 'filters').split()
@@ -386,18 +386,16 @@ def filters(section=None):
 
 def planet_options():
     """ dictionary of planet wide options"""
-    return dict(map(lambda opt: (opt,
-        parser.get('Planet', opt, raw=(opt=="log_format"))),
-        parser.options('Planet')))
+    return dict([(opt,
+        parser.get('Planet', opt, raw=(opt=="log_format"))) for opt in parser.options('Planet')])
 
 def feed_options(section):
     """ dictionary of feed specific options"""
-    import config
-    options = dict([(key,value) for key,value in planet_options().items()
+    from . import config
+    options = dict([(key,value) for key,value in list(planet_options().items())
         if key not in planet_predefined_options])
     if parser.has_section(section):
-        options.update(dict(map(lambda opt: (opt, parser.get(section,opt)),
-            parser.options(section))))
+        options.update(dict([(opt, parser.get(section,opt)) for opt in parser.options(section)]))
     return options
 
 def template_options(section):
@@ -410,4 +408,4 @@ def filter_options(section):
 
 def write(file=sys.stdout):
     """ write out an updated template """
-    print parser.write(file)
+    print(parser.write(file))

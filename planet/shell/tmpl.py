@@ -1,5 +1,5 @@
 from xml.sax.saxutils import escape
-import sgmllib, time, os, sys, new, urlparse, re
+import sgmllib, time, os, sys, new, urllib.parse, re
 from planet import config, feedparser
 import htmltmpl
 
@@ -20,15 +20,15 @@ class stripHtml(sgmllib.SGMLParser):
             self.feed(data)
         self.close()
     def __str__(self):
-        if isinstance(self.result, unicode):
+        if isinstance(self.result, str):
             return self.result.encode('utf-8')
         return self.result
     def handle_entityref(self, ref):
-        import htmlentitydefs
-        if ref in htmlentitydefs.entitydefs:
-            ref=htmlentitydefs.entitydefs[ref]
+        import html.entities
+        if ref in html.entities.entitydefs:
+            ref=html.entities.entitydefs[ref]
             if len(ref)==1:
-                self.result+=unichr(ord(ref))
+                self.result+=chr(ord(ref))
             elif ref.startswith('&#') and ref.endswith(';'):
                 self.handle_charref(ref[2:-1])
             else:
@@ -38,9 +38,9 @@ class stripHtml(sgmllib.SGMLParser):
     def handle_charref(self, ref):
         try:
             if ref.startswith('x'):
-                self.result+=unichr(int(ref[1:],16))
+                self.result+=chr(int(ref[1:],16))
             else:
-                self.result+=unichr(int(ref))
+                self.result+=chr(int(ref))
         except:
             self.result+='&#%s;' % ref
     def handle_data(self, data):
@@ -49,7 +49,7 @@ class stripHtml(sgmllib.SGMLParser):
 # Data format mappers
 
 def String(value):
-    if isinstance(value, unicode): return value.encode('utf-8')
+    if isinstance(value, str): return value.encode('utf-8')
     return value
 
 def Plain(value):
@@ -145,7 +145,7 @@ def tmpl_mapper(source, rules):
                 node = node[path]
             elif isinstance(path, dict):
                 for test in node:
-                    for key, value in path.items():
+                    for key, value in list(path.items()):
                         if test.get(key,None) != value: break
                     else:
                         node = test
@@ -158,19 +158,19 @@ def tmpl_mapper(source, rules):
             if node: output[rule[0]] = rule[1](node)
         
     # copy over all planet namespaced elements from parent source
-    for name,value in source.items():
+    for name,value in list(source.items()):
         if name.startswith('planet_'):
             output[name[7:]] = String(value)
-        if not output.get('name') and source.has_key('title_detail'):
+        if not output.get('name') and 'title_detail' in source:
             output['name'] = Plain(source.title_detail.value)
 
     # copy over all planet namespaced elements from child source element
     if 'source' in source:
-        for name,value in source.source.items():
+        for name,value in list(source.source.items()):
             if name.startswith('planet_'):
                 output['channel_' + name[7:]] = String(value)
             if not output.get('channel_name') and \
-                source.source.has_key('title_detail'):
+                'title_detail' in source.source:
                 output['channel_name'] = Plain(source.source.title_detail.value)
 
     return output
@@ -178,7 +178,7 @@ def tmpl_mapper(source, rules):
 def _end_planet_source(self):
     self._end_source()
     context = self._getContext()
-    if not context.has_key('sources'): context['sources'] = []
+    if 'sources' not in context: context['sources'] = []
     context.sources.append(context.source)
     del context['source']
 
@@ -233,14 +233,14 @@ def template_info(source):
     # remove new_dates and new_channels that aren't "new"
     date = channel = None
     for item in output['Items']:
-        if item.has_key('new_date'):
+        if 'new_date' in item:
             if item['new_date'] == date:
                 del item['new_date']
             else:
                 date = item['new_date']
 
-        if item.has_key('new_channel'):
-            if item['new_channel'] == channel and not item.has_key('new_date'):
+        if 'new_channel' in item:
+            if item['new_channel'] == channel and 'new_date' not in item:
                 del item['new_channel']
             else:
                 channel = item['new_channel']
@@ -252,14 +252,14 @@ def run(script, doc, output_file=None, options={}):
     manager = htmltmpl.TemplateManager()
     template = manager.prepare(script)
     tp = htmltmpl.TemplateProcessor(html_escape=0)
-    for key,value in template_info(doc).items():
+    for key,value in list(template_info(doc).items()):
         tp.set(key, value)
 
     if output_file:
         basename = os.path.basename(output_file)
         reluri = os.path.splitext(os.path.basename(output_file))[0]
-        tp.set('url', urlparse.urljoin(config.link(),reluri))
-        tp.set('fullurl', urlparse.urljoin(config.link(),basename))
+        tp.set('url', urllib.parse.urljoin(config.link(),reluri))
+        tp.set('fullurl', urllib.parse.urljoin(config.link(),basename))
 
         output = open(output_file, "w")
         output.write(tp.process(template))

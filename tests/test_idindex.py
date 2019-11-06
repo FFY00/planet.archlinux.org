@@ -20,11 +20,11 @@ class idIndexTest(unittest.TestCase):
         iri = 'http://www.\xe8\xa9\xb9\xe5\xa7\x86\xe6\x96\xaf.com/'
         index[filename('', iri)] = 'data'
         index[filename('', iri.decode('utf-8'))] = 'data'
-        index[filename('', u'1234')] = 'data'
+        index[filename('', '1234')] = 'data'
         index.close()
         
     def test_index_spider(self):
-        import test_spider
+        from . import test_spider
         config.load(test_spider.configfile)
 
         index = idindex.create()
@@ -46,7 +46,7 @@ class idIndexTest(unittest.TestCase):
             os.removedirs(os.path.split(test_spider.workdir)[0])
 
     def test_index_splice(self):
-        import test_splice
+        from . import test_splice
         config.load(test_splice.configfile)
         index = idindex.create()
 
@@ -54,7 +54,7 @@ class idIndexTest(unittest.TestCase):
         self.assertEqual('tag:planet.intertwingly.net,2006:testfeed1', index['planet.intertwingly.net,2006,testfeed1,1'])
         self.assertEqual('http://intertwingly.net/code/venus/tests/data/spider/testfeed3.rss', index['planet.intertwingly.net,2006,testfeed3,1'])
 
-        for key in index.keys():
+        for key in list(index.keys()):
             value = index[key]
             if value.find('testfeed2')>0: index[key] = value.swapcase()
         index.close()

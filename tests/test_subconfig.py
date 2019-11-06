@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 
-from test_config_csv import ConfigCsvTest
+from .test_config_csv import ConfigCsvTest
 from planet import config
 
 class SubConfigTest(ConfigCsvTest):

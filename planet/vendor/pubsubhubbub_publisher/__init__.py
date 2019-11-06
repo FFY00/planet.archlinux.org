@@ -1,2 +1,2 @@
-from pubsubhubbub_publish import *
+from .pubsubhubbub_publish import *
 

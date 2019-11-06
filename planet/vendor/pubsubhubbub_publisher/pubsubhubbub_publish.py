@@ -34,8 +34,8 @@ HTTP proxy.
 
 __author__ = 'bslatkin@gmail.com (Brett Slatkin)'
 
-import urllib
-import urllib2
+import urllib.request, urllib.parse, urllib.error
+import urllib.request, urllib.error, urllib.parse
 
 
 class PublishError(Exception):
@@ -59,16 +59,16 @@ def publish(hub, *urls):
   Raises:
     PublishError if anything went wrong during publishing.
   """
-  if len(urls) == 1 and not isinstance(urls[0], basestring):
+  if len(urls) == 1 and not isinstance(urls[0], str):
     urls = list(urls[0])
 
-  for i in xrange(0, len(urls), URL_BATCH_SIZE):
+  for i in range(0, len(urls), URL_BATCH_SIZE):
     chunk = urls[i:i+URL_BATCH_SIZE]
-    data = urllib.urlencode(
+    data = urllib.parse.urlencode(
         {'hub.url': chunk, 'hub.mode': 'publish'}, doseq=True)
     try:
-      response = urllib2.urlopen(hub, data)
-    except (IOError, urllib2.HTTPError), e:
+      response = urllib.request.urlopen(hub, data)
+    except (IOError, urllib.error.HTTPError) as e:
       if hasattr(e, 'code') and e.code == 204:
         continue
       error = ''
