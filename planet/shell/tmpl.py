@@ -1,5 +1,5 @@
 from xml.sax.saxutils import escape
-import sgmllib, time, os, sys, new, urllib.parse, re
+import sgmllib, time, os, sys, types, urllib.parse, re
 from planet import config, feedparser
 import htmltmpl
 
@@ -189,7 +189,7 @@ def template_info(source):
     mixin=feedparser._FeedParserMixin
     mixin._start_planet_source = mixin._start_source
     mixin._end_planet_source = \
-        new.instancemethod(_end_planet_source, None, mixin)
+        types.MethodType(_end_planet_source, None, mixin)
     data=feedparser.parse(source)
     del mixin._start_planet_source
     del mixin._end_planet_source
